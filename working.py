@@ -1,21 +1,18 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
+from typing import Optional
+from pydantic import BaseModel
 
 app = FastAPI()
+
+class Item(BaseModel):
+    name: str
+    price: float
+    brand: Optional[str]
 
 inventory = {
         1: {
             "name" : "Riz",
             "price" : 2000,
-            "brand" : "regular"
-        },
-        2: {
-            "name" : "Pate",
-            "price" : 1500,
-            "brand" : "regular"
-        },
-        3: {
-            "name" : "Patato",
-            "price" : 1500,
             "brand" : "regular"
         }
     }
@@ -24,12 +21,15 @@ def get_item(item_id: int):
     return inventory[item_id]
     
 @app.get("/get-by-name")
-def get_item(name: str):
+def get_item(*, name: str = Query(None, title="Name", description="Name of item,"), test: int ):
     for item_id in inventory:
         if inventory[item_id]["name"] == name:
             return inventory[item_id]
     return {"Data": "Not found"}
 
+@app.get("/create-item")
+def create_item(item: Item):
+    return{}
 
     
 
